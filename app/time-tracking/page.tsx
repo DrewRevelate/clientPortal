@@ -1,3 +1,5 @@
+"use client";
+
 import DashboardLayout from '@/components/layout/Dashboard';
 import Link from 'next/link';
 import { FiClock, FiDownload, FiFilter, FiCalendar, FiCreditCard, FiArrowRight } from 'react-icons/fi';

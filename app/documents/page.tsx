@@ -1,3 +1,5 @@
+"use client";
+
 import DashboardLayout from '@/components/layout/Dashboard';
 import Link from 'next/link';
 import { FiFilter, FiSearch, FiUpload, FiDownload, FiFolder, FiFile, FiFileText, FiFilePlus, FiGrid, FiList } from 'react-icons/fi';

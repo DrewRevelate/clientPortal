@@ -1,3 +1,5 @@
+"use client";
+
 import DashboardLayout from '@/components/layout/Dashboard';
 import { useState } from 'react';
 import { FiUser, FiLock, FiBell, FiBriefcase, FiSave, FiUpload, FiMoon, FiSun } from 'react-icons/fi';
