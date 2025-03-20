@@ -10,7 +10,21 @@ export default function Documents() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   
   // Sample data for documents
-  const documents = [
+  interface Document {
+    id: number;
+    name: string;
+    type: DocumentType;
+    category: string;
+    project: string;
+    uploadedAt: string;
+    size: string;
+    status: DocumentStatus;
+    signatureRequired: boolean;
+    signatureStatus: string | null;
+    lastViewed: string;
+  }
+
+  const documents: Document[] = [
     { 
       id: 1,
       name: 'Service Agreement', 
@@ -92,7 +106,9 @@ export default function Documents() {
   ];
 
   // Document type icons and colors
-  const documentTypeIcons = {
+  type DocumentType = 'PDF' | 'DOCX' | 'XLSX' | 'PPTX' | 'Folder';
+
+  const documentTypeIcons: Record<DocumentType, JSX.Element> = {
     'PDF': <FiFileText className="h-6 w-6" />,
     'DOCX': <FiFile className="h-6 w-6" />,
     'XLSX': <FiFile className="h-6 w-6" />,
@@ -100,7 +116,7 @@ export default function Documents() {
     'Folder': <FiFolder className="h-6 w-6" />
   };
 
-  const documentTypeColors = {
+  const documentTypeColors: Record<DocumentType, string> = {
     'PDF': 'text-red-500 dark:text-red-400',
     'DOCX': 'text-blue-500 dark:text-blue-400',
     'XLSX': 'text-green-500 dark:text-green-400',
@@ -109,7 +125,9 @@ export default function Documents() {
   };
 
   // Status colors
-  const statusColors = {
+  type DocumentStatus = 'Current' | 'Archived' | 'Pending' | 'Expired' | 'Paid';
+
+  const statusColors: Record<DocumentStatus, string> = {
     'Current': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
     'Archived': 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
     'Pending': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
