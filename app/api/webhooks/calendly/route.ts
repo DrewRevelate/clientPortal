@@ -127,11 +127,6 @@ async function handleEventCreated(supabase: any, payload: CalendlyWebhookPayload
 
   // Get meeting title from event type name
   const meetingTitle = payload.event_type.name;
-  
-  // Calculate duration in minutes
-  const startTime = new Date(payload.event.start_time);
-  const endTime = new Date(payload.event.end_time);
-  const durationMinutes = Math.round((endTime.getTime() - startTime.getTime()) / 60000);
 
   // Create the meeting record
   const { data: meetingData, error: meetingError } = await supabase.from('meetings').insert({
@@ -151,26 +146,6 @@ async function handleEventCreated(supabase: any, payload: CalendlyWebhookPayload
   if (meetingError) {
     console.error('Error creating meeting:', meetingError);
     return;
-  }
-
-  // Create an appointment record as well to maintain both tables
-  const { error: appointmentError } = await supabase.from('appointments').insert({
-    title: meetingTitle,
-    description: `Scheduled via Calendly with ${payload.invitee.first_name} ${payload.invitee.last_name}`,
-    start_time: payload.event.start_time,
-    end_time: payload.event.end_time,
-    duration: durationMinutes,
-    is_video_meeting: payload.event.location.type === 'zoom' || payload.event.location.type === 'google_meet',
-    meeting_link: payload.event.location.join_url || '',
-    client_id: contactId || null,
-    calendly_event_uuid: payload.event.uuid,
-    calendly_invitee_uuid: payload.invitee.uuid,
-    reschedule_url: payload.invitee.reschedule_url,
-    cancel_url: payload.invitee.cancel_url,
-  });
-
-  if (appointmentError) {
-    console.error('Error creating appointment:', appointmentError);
   }
 
   // If a meeting record was created, create an empty meeting_notes record
@@ -213,23 +188,13 @@ async function handleEventCreated(supabase: any, payload: CalendlyWebhookPayload
       if (updateMeetingError) {
         console.error('Error updating meeting with new contact:', updateMeetingError);
       }
-
-      // Update the appointment with the new contact ID
-      const { error: updateAppointmentError } = await supabase
-        .from('appointments')
-        .update({ client_id: newContact[0].id })
-        .eq('calendly_invitee_uuid', payload.invitee.uuid);
-
-      if (updateAppointmentError) {
-        console.error('Error updating appointment with new contact:', updateAppointmentError);
-      }
     }
   }
 }
 
 async function handleEventCanceled(supabase: any, payload: CalendlyWebhookPayload['payload']) {
   // Update meeting status to canceled
-  const { error: meetingError } = await supabase
+  const { error } = await supabase
     .from('meetings')
     .update({ 
       status: 'canceled',
@@ -238,21 +203,7 @@ async function handleEventCanceled(supabase: any, payload: CalendlyWebhookPayloa
     })
     .eq('calendly_invitee_uuid', payload.invitee.uuid);
 
-  if (meetingError) {
-    console.error('Error updating meeting to canceled:', meetingError);
-  }
-
-  // Update appointment status to canceled
-  const { error: appointmentError } = await supabase
-    .from('appointments')
-    .update({ 
-      status: 'canceled',
-      canceled_at: new Date().toISOString(),
-      cancel_reason: payload.event.cancel_reason || 'Canceled by invitee'
-    })
-    .eq('calendly_invitee_uuid', payload.invitee.uuid);
-
-  if (appointmentError) {
-    console.error('Error updating appointment to canceled:', appointmentError);
+  if (error) {
+    console.error('Error updating meeting to canceled:', error);
   }
 }
