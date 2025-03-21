@@ -11,7 +11,7 @@ export interface Contact {
   email: string;
   company_id?: string | null;
   company_name?: string | null;
-  companies?: { name: string } | null;
+  companies?: { name: string }[] | null; // Companies is an array
 }
 
 interface ContactsDropdownProps {
@@ -71,7 +71,9 @@ export default function ContactsDropdown({
         // Process data to include company_name
         const processedData = data.map(contact => ({
           ...contact,
-          company_name: contact.companies ? contact.companies.name : null
+          company_name: contact.companies && Array.isArray(contact.companies) && contact.companies.length > 0
+            ? contact.companies[0].name
+            : null
         }));
         
         setContacts(processedData);
