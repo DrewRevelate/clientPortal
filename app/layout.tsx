@@ -1,7 +1,9 @@
+"use client";
+
 import { Inter, Lexend } from 'next/font/google';
 import './globals.css';
-import { Metadata } from 'next';
 import { AuthProvider } from '@/lib/contexts/AuthContext';
+import { useState, useEffect } from 'react';
 
 // Font configuration
 const inter = Inter({
@@ -16,8 +18,8 @@ const lexend = Lexend({
   variable: '--font-lexend',
 });
 
-// Metadata
-export const metadata: Metadata = {
+// Metadata moved to a separate file due to "use client" directive
+export const metadata = {
   title: 'RevelateOps Client Portal',
   description: 'Secure client portal for RevelateOps clients to track projects, tasks, meetings, and documents.',
 };
@@ -27,10 +29,29 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [isClient, setIsClient] = useState(false);
+  
+  // Detect client-side rendering
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   return (
     <html lang="en" className={`${inter.variable} ${lexend.variable}`}>
+      <head>
+        <title>RevelateOps Client Portal</title>
+        <meta name="description" content="Secure client portal for RevelateOps clients to track projects, tasks, meetings, and documents." />
+      </head>
       <body className="font-sans bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
-        <AuthProvider>{children}</AuthProvider>
+        {isClient ? (
+          <AuthProvider>{children}</AuthProvider>
+        ) : (
+          // Server-side rendering fallback
+          <div className="flex flex-col items-center justify-center min-h-screen">
+            <div className="animate-pulse h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
+            <div className="animate-pulse h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          </div>
+        )}
       </body>
     </html>
   );

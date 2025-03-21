@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/contexts/AuthContext';
+import Image from 'next/image';
+import { FiLoader } from 'react-icons/fi';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -10,26 +12,54 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const router = useRouter();
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, refreshSession } = useAuth();
   const [isClient, setIsClient] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
+    
+    // Refresh session on initial load
+    const checkAuth = async () => {
+      await refreshSession();
+      setAuthChecked(true);
+    };
+    
+    checkAuth();
+  }, [refreshSession]);
 
   useEffect(() => {
-    if (isClient && !isLoading && !user) {
+    // Only redirect if we're on the client and the auth check is complete
+    if (isClient && authChecked && !isLoading && !user) {
       router.push('/auth/signin');
     }
-  }, [user, isLoading, router, isClient]);
+  }, [user, isLoading, router, isClient, authChecked]);
 
-  // Show nothing while checking authentication or when not authenticated
-  if (isLoading || !user) {
+  // Show loading screen while checking authentication
+  if (!isClient || isLoading || !authChecked) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 dark:border-primary-400"></div>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="mb-8">
+          <Image
+            src="/logo.svg"
+            alt="RevelateOps Logo"
+            width={180}
+            height={48}
+            priority
+          />
+        </div>
+        <FiLoader className="animate-spin h-10 w-10 text-primary-600 dark:text-primary-400 mb-4" />
+        <p className="text-gray-600 dark:text-gray-400 text-center">
+          Loading your portal...
+        </p>
       </div>
     );
+  }
+
+  // If not authenticated and check complete, the above useEffect will redirect
+  // This is just a fallback
+  if (!user) {
+    return null;
   }
 
   return <>{children}</>;

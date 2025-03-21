@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/lib/supabase/client';
-import { useAuth } from '@/lib/contexts/AuthContext';
 
 interface AuthFormProps {
   view?: 'sign_in' | 'sign_up' | 'forgotten_password';
@@ -13,15 +12,31 @@ interface AuthFormProps {
 
 const AuthForm = ({ view = 'sign_in' }: AuthFormProps) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Redirect after successful authentication
-  supabase.auth.onAuthStateChange((event) => {
-    if (event === 'SIGNED_IN') {
-      router.push('/dashboard');
+  // Check for error parameter in URL
+  useEffect(() => {
+    const errorParam = searchParams.get('error');
+    if (errorParam) {
+      setError(decodeURIComponent(errorParam));
     }
-  });
+  }, [searchParams]);
+
+  // Set up auth state change listener
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        console.log('User signed in:', session.user.email);
+        router.push('/dashboard');
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [router]);
 
   return (
     <div className="w-full max-w-md">
@@ -35,6 +50,7 @@ const AuthForm = ({ view = 'sign_in' }: AuthFormProps) => {
         <Auth
           supabaseClient={supabase}
           view={view}
+          showLinks={true}
           appearance={{
             theme: ThemeSupa,
             variables: {
@@ -67,7 +83,7 @@ const AuthForm = ({ view = 'sign_in' }: AuthFormProps) => {
             },
           }}
           providers={[]}
-          redirectTo={`${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`}
+          redirectTo={`${typeof window !== 'undefined' ? window.location.origin : ''}/auth/callback`}
         />
       </div>
     </div>

@@ -8,21 +8,17 @@ const publicRoutes = [
   '/auth/signup',
   '/auth/reset-password',
   '/auth/callback',
+  '/auth/confirm',
 ];
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
   const supabase = createMiddlewareClient({ req, res });
   
-  // Check if the user is authenticated
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  
   // Get the current path
   const path = req.nextUrl.pathname;
   
-  // If the user is on a public route, let them through
+  // Allow all auth routes without checking session
   if (publicRoutes.some(route => path.startsWith(route))) {
     return res;
   }
@@ -31,17 +27,24 @@ export async function middleware(req: NextRequest) {
   if (path.startsWith('/api')) {
     return res;
   }
-  
-  // If the user is not authenticated and not on a public route, redirect to login
-  if (!session && !publicRoutes.some(route => path.startsWith(route))) {
-    const redirectUrl = new URL('/auth/signin', req.url);
-    return NextResponse.redirect(redirectUrl);
-  }
-  
-  // If the user is authenticated and trying to access a public route, redirect to dashboard
-  if (session && publicRoutes.some(route => path.startsWith(route))) {
-    const redirectUrl = new URL('/dashboard', req.url);
-    return NextResponse.redirect(redirectUrl);
+
+  // Check if the user is authenticated
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    // If the user is not authenticated and not on a public route, redirect to login
+    if (!session && !publicRoutes.some(route => path.startsWith(route))) {
+      return NextResponse.redirect(new URL('/auth/signin', req.url));
+    }
+    
+    // If user is accessing the root path, redirect to dashboard if authenticated
+    if (path === '/' && session) {
+      return NextResponse.redirect(new URL('/dashboard', req.url));
+    }
+  } catch (error) {
+    console.error('Middleware auth error:', error);
+    // If there's an error checking authentication, redirect to login
+    return NextResponse.redirect(new URL('/auth/signin', req.url));
   }
   
   return res;
@@ -50,6 +53,13 @@ export async function middleware(req: NextRequest) {
 // Specify which routes this middleware applies to
 export const config = {
   matcher: [
+    /*
+     * Match all request paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder (public assets)
+     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
