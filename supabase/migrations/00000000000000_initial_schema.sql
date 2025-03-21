@@ -294,14 +294,15 @@ ALTER TABLE app.project_updates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE app.task_comments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE app.notifications ENABLE ROW LEVEL SECURITY;
 
+-- Fixed policy with proper type casting
 CREATE POLICY "Users can view own meeting notes"
   ON app.meeting_notes FOR SELECT
   USING (
     auth.uid() IN (
-      SELECT client_id FROM app.meetings WHERE id = meeting_id
+      SELECT client_id FROM app.meetings WHERE id::text = meeting_id::text
     ) OR
     auth.uid() IN (
-      SELECT user_id FROM app.meeting_attendees WHERE meeting_id = meeting_id
+      SELECT user_id FROM app.meeting_attendees WHERE meeting_id::text = app.meeting_notes.meeting_id::text
     )
   );
 
