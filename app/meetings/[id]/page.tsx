@@ -22,6 +22,8 @@ interface MeetingDetailsProps {
 
 // Define status type to match the keys in statusStyles
 type MeetingStatus = 'Upcoming' | 'Live' | 'Completed' | 'Cancelled';
+// Define response type to match the keys in responseStyles
+type AttendeeResponse = 'Accepted' | 'Declined' | 'Tentative' | 'Pending';
 
 export default function MeetingDetails({ params }: MeetingDetailsProps) {
   // Sample meeting data (in a real app, this would be fetched based on the ID)
@@ -37,10 +39,10 @@ export default function MeetingDetails({ params }: MeetingDetailsProps) {
     status: 'Upcoming' as MeetingStatus,
     project: 'CRM Integration',
     attendees: [
-      { name: 'Alex Thompson', role: 'Project Manager', response: 'Accepted' },
-      { name: 'Sarah Miller', role: 'Developer', response: 'Accepted' },
-      { name: 'Jason Patel', role: 'Data Analyst', response: 'Tentative' },
-      { name: 'You', role: 'Client', response: 'Accepted' }
+      { name: 'Alex Thompson', role: 'Project Manager', response: 'Accepted' as AttendeeResponse },
+      { name: 'Sarah Miller', role: 'Developer', response: 'Accepted' as AttendeeResponse },
+      { name: 'Jason Patel', role: 'Data Analyst', response: 'Tentative' as AttendeeResponse },
+      { name: 'You', role: 'Client', response: 'Accepted' as AttendeeResponse }
     ],
     meetingLink: 'https://zoom.us/j/123456789',
     meetingId: '123 456 789',
@@ -72,14 +74,14 @@ export default function MeetingDetails({ params }: MeetingDetailsProps) {
   };
 
   // Attendee response styling
-  const responseStyles = {
+  const responseStyles: Record<AttendeeResponse, string> = {
     'Accepted': 'text-green-700 dark:text-green-400',
     'Declined': 'text-red-700 dark:text-red-400',
     'Tentative': 'text-yellow-700 dark:text-yellow-400',
     'Pending': 'text-gray-500 dark:text-gray-400'
   };
 
-  const responseIcons = {
+  const responseIcons: Record<AttendeeResponse, React.ReactNode> = {
     'Accepted': <FiCheck className="h-4 w-4" />,
     'Declined': <FiX className="h-4 w-4" />,
     'Tentative': <FiClock className="h-4 w-4" />,
