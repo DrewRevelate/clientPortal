@@ -9,6 +9,9 @@ export default function TimeTracking() {
   // State for time period filter
   const [timePeriod, setTimePeriod] = useState('all-time');
   
+  // Define status type to match the keys in statusColors
+  type TimePackageStatus = 'Active' | 'Completed' | 'Expired' | 'Upcoming';
+
   // Sample data for time packages
   const timePackages = [
     { 
@@ -19,7 +22,7 @@ export default function TimeTracking() {
       hoursRemaining: 11.5,
       purchaseDate: 'January 1, 2025',
       expirationDate: 'March 31, 2025',
-      status: 'Active',
+      status: 'Active' as TimePackageStatus,
       percentUsed: 71.25
     },
     { 
@@ -30,7 +33,7 @@ export default function TimeTracking() {
       hoursRemaining: 8,
       purchaseDate: 'February 15, 2025',
       expirationDate: 'May 15, 2025',
-      status: 'Active',
+      status: 'Active' as TimePackageStatus,
       percentUsed: 60
     },
     { 
@@ -41,7 +44,7 @@ export default function TimeTracking() {
       hoursRemaining: 0,
       purchaseDate: 'October 1, 2024',
       expirationDate: 'December 31, 2024',
-      status: 'Completed',
+      status: 'Completed' as TimePackageStatus,
       percentUsed: 100
     },
   ];
@@ -111,7 +114,7 @@ export default function TimeTracking() {
   ];
 
   // Status colors for time packages
-  const statusColors = {
+  const statusColors: Record<TimePackageStatus, string> = {
     'Active': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
     'Completed': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
     'Expired': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
