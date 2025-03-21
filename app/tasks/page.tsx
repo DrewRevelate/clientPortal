@@ -4,6 +4,10 @@ import DashboardLayout from '@/components/layout/Dashboard';
 import Link from 'next/link';
 import { FiPlus, FiFilter, FiSearch, FiCheckCircle, FiClock, FiAlertCircle } from 'react-icons/fi';
 
+// Define status type to match the keys in statusStyles
+type TaskStatus = 'Pending' | 'In Progress' | 'Completed' | 'Blocked';
+type TaskPriority = 'High' | 'Medium' | 'Low';
+
 export default function Tasks() {
   // Sample data for tasks
   const tasks = [
@@ -11,8 +15,8 @@ export default function Tasks() {
       id: 1,
       name: 'Review analytics setup', 
       description: 'Review the Google Analytics configuration and verify tracking is working properly',
-      status: 'In Progress',
-      priority: 'High',
+      status: 'In Progress' as TaskStatus,
+      priority: 'High' as TaskPriority,
       dueDate: 'March 21, 2025',
       project: 'CRM Integration',
       assignedTo: 'Revelate Team'
@@ -21,8 +25,8 @@ export default function Tasks() {
       id: 2,
       name: 'Provide feedback on dashboard mockups', 
       description: 'Review the proposed dashboard designs and provide feedback',
-      status: 'Pending',
-      priority: 'Medium',
+      status: 'Pending' as TaskStatus,
+      priority: 'Medium' as TaskPriority,
       dueDate: 'March 23, 2025',
       project: 'Data Visualization Dashboard',
       assignedTo: 'Assigned to you'
@@ -31,8 +35,8 @@ export default function Tasks() {
       id: 3,
       name: 'Approve content calendar', 
       description: 'Review and approve the Q2 content marketing calendar',
-      status: 'Pending',
-      priority: 'Low',
+      status: 'Pending' as TaskStatus,
+      priority: 'Low' as TaskPriority,
       dueDate: 'March 28, 2025',
       project: 'Email Marketing Automation',
       assignedTo: 'Assigned to you'
@@ -41,8 +45,8 @@ export default function Tasks() {
       id: 4,
       name: 'Provide access to sales database', 
       description: 'Share credentials to the sales database for integration',
-      status: 'Completed',
-      priority: 'Medium',
+      status: 'Completed' as TaskStatus,
+      priority: 'Medium' as TaskPriority,
       dueDate: 'March 15, 2025',
       project: 'CRM Integration',
       assignedTo: 'Assigned to you'
@@ -50,7 +54,7 @@ export default function Tasks() {
   ];
 
   // Status and priority styling
-  const statusStyles = {
+  const statusStyles: Record<TaskStatus, { badge: string, icon: JSX.Element }> = {
     'Pending': {
       badge: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
       icon: <FiClock className="w-5 h-5" />
@@ -69,7 +73,7 @@ export default function Tasks() {
     }
   };
 
-  const priorityStyles = {
+  const priorityStyles: Record<TaskPriority, string> = {
     'High': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
     'Medium': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
     'Low': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'

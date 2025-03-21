@@ -1,5 +1,3 @@
-"use client";
-
 import DashboardLayout from '@/components/layout/Dashboard';
 import Link from 'next/link';
 import { 
@@ -22,6 +20,9 @@ interface MeetingDetailsProps {
   };
 }
 
+// Define status type to match the keys in statusStyles
+type MeetingStatus = 'Upcoming' | 'Live' | 'Completed' | 'Cancelled';
+
 export default function MeetingDetails({ params }: MeetingDetailsProps) {
   // Sample meeting data (in a real app, this would be fetched based on the ID)
   const meeting = {
@@ -33,7 +34,7 @@ export default function MeetingDetails({ params }: MeetingDetailsProps) {
     endTime: '11:00 AM',
     duration: '60 min',
     timezone: 'Eastern Time (ET)',
-    status: 'Upcoming',
+    status: 'Upcoming' as MeetingStatus,
     project: 'CRM Integration',
     attendees: [
       { name: 'Alex Thompson', role: 'Project Manager', response: 'Accepted' },
@@ -63,7 +64,7 @@ export default function MeetingDetails({ params }: MeetingDetailsProps) {
   };
 
   // Status styling
-  const statusStyles = {
+  const statusStyles: Record<MeetingStatus, string> = {
     'Upcoming': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
     'Live': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
     'Completed': 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',

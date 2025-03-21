@@ -13,6 +13,10 @@ import {
   FiPlus
 } from 'react-icons/fi';
 
+// Define status types to match the keys in statusColors
+type ProjectStatus = 'Planning' | 'In Progress' | 'On Hold' | 'Completed' | 'Cancelled' | 'Not Started';
+type TaskPriority = 'High' | 'Medium' | 'Low';
+
 interface ProjectDetailsProps {
   params: {
     id: string;
@@ -25,7 +29,7 @@ export default function ProjectDetails({ params }: ProjectDetailsProps) {
     id: params.id,
     name: 'CRM Integration',
     description: 'Integration of Salesforce with existing systems to streamline customer data management and improve sales processes. This project involves API development, data migration, and user training.',
-    status: 'In Progress',
+    status: 'In Progress' as ProjectStatus,
     startDate: 'January 15, 2025',
     targetEndDate: 'April 30, 2025',
     completionPercentage: 45,
@@ -34,10 +38,10 @@ export default function ProjectDetails({ params }: ProjectDetailsProps) {
     createdAt: 'January 10, 2025',
     updatedAt: 'March 16, 2025',
     tasks: [
-      { id: 1, name: 'Review analytics setup', status: 'In Progress', dueDate: 'March 21, 2025', priority: 'High' },
-      { id: 2, name: 'Provide access to sales database', status: 'Completed', dueDate: 'March 15, 2025', priority: 'Medium' },
-      { id: 3, name: 'Configure API endpoints', status: 'Pending', dueDate: 'March 25, 2025', priority: 'Medium' },
-      { id: 4, name: 'Approve integration plan', status: 'Completed', dueDate: 'February 5, 2025', priority: 'High' },
+      { id: 1, name: 'Review analytics setup', status: 'In Progress' as ProjectStatus, dueDate: 'March 21, 2025', priority: 'High' as TaskPriority },
+      { id: 2, name: 'Provide access to sales database', status: 'Completed' as ProjectStatus, dueDate: 'March 15, 2025', priority: 'Medium' as TaskPriority },
+      { id: 3, name: 'Configure API endpoints', status: 'Pending', dueDate: 'March 25, 2025', priority: 'Medium' as TaskPriority },
+      { id: 4, name: 'Approve integration plan', status: 'Completed' as ProjectStatus, dueDate: 'February 5, 2025', priority: 'High' as TaskPriority },
     ],
     documents: [
       { id: 1, name: 'Project Proposal', type: 'PDF', uploadedAt: 'January 10, 2025', size: '3.5 MB' },
@@ -63,18 +67,18 @@ export default function ProjectDetails({ params }: ProjectDetailsProps) {
       },
     ],
     milestones: [
-      { name: 'Project Kickoff', status: 'Completed', date: 'January 15, 2025' },
-      { name: 'Requirements Gathering', status: 'Completed', date: 'January 30, 2025' },
-      { name: 'System Design', status: 'Completed', date: 'February 20, 2025' },
-      { name: 'API Development', status: 'In Progress', date: 'March 25, 2025' },
-      { name: 'Data Migration', status: 'Not Started', date: 'April 15, 2025' },
-      { name: 'Testing & QA', status: 'Not Started', date: 'April 25, 2025' },
-      { name: 'Launch', status: 'Not Started', date: 'April 30, 2025' },
+      { name: 'Project Kickoff', status: 'Completed' as ProjectStatus, date: 'January 15, 2025' },
+      { name: 'Requirements Gathering', status: 'Completed' as ProjectStatus, date: 'January 30, 2025' },
+      { name: 'System Design', status: 'Completed' as ProjectStatus, date: 'February 20, 2025' },
+      { name: 'API Development', status: 'In Progress' as ProjectStatus, date: 'March 25, 2025' },
+      { name: 'Data Migration', status: 'Not Started' as ProjectStatus, date: 'April 15, 2025' },
+      { name: 'Testing & QA', status: 'Not Started' as ProjectStatus, date: 'April 25, 2025' },
+      { name: 'Launch', status: 'Not Started' as ProjectStatus, date: 'April 30, 2025' },
     ]
   };
 
   // Status colors
-  const statusColors = {
+  const statusColors: Record<ProjectStatus, string> = {
     'Planning': 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
     'In Progress': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
     'On Hold': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
@@ -84,7 +88,7 @@ export default function ProjectDetails({ params }: ProjectDetailsProps) {
   };
 
   // Task priority colors
-  const priorityColors = {
+  const priorityColors: Record<TaskPriority, string> = {
     'High': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
     'Medium': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
     'Low': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'

@@ -4,6 +4,9 @@ import DashboardLayout from '@/components/layout/Dashboard';
 import Link from 'next/link';
 import { FiPlus, FiFilter, FiSearch } from 'react-icons/fi';
 
+// Define status type to match the keys in statusColors
+type ProjectStatus = 'Planning' | 'In Progress' | 'On Hold' | 'Completed' | 'Cancelled';
+
 export default function Projects() {
   // Sample data for projects
   const projects = [
@@ -11,7 +14,7 @@ export default function Projects() {
       id: 1,
       name: 'CRM Integration', 
       description: 'Integration of Salesforce with existing systems',
-      status: 'In Progress',
+      status: 'In Progress' as ProjectStatus,
       startDate: 'Jan 15, 2025',
       endDate: 'Apr 30, 2025',
       completionPercentage: 45
@@ -20,7 +23,7 @@ export default function Projects() {
       id: 2,
       name: 'Data Visualization Dashboard', 
       description: 'Creating interactive dashboards for business analytics',
-      status: 'Planning',
+      status: 'Planning' as ProjectStatus,
       startDate: 'Feb 10, 2025',
       endDate: 'May 15, 2025',
       completionPercentage: 15
@@ -29,7 +32,7 @@ export default function Projects() {
       id: 3,
       name: 'Email Marketing Automation', 
       description: 'Setting up automated email sequences and analytics',
-      status: 'Completed',
+      status: 'Completed' as ProjectStatus,
       startDate: 'Oct 5, 2024',
       endDate: 'Jan 20, 2025',
       completionPercentage: 100
@@ -37,7 +40,7 @@ export default function Projects() {
   ];
 
   // Status badge colors
-  const statusColors = {
+  const statusColors: Record<ProjectStatus, string> = {
     'Planning': 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
     'In Progress': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
     'On Hold': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
