@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import Input from '../ui/Input';
+import Textarea from '../ui/Textarea';
 import Button from '../ui/Button';
 import ContactsDropdown from './ContactsDropdown';
 
@@ -178,14 +179,12 @@ export default function MeetingForm({ meetingId }: MeetingFormProps) {
         disabled={loading}
       />
 
-      <Input
+      <Textarea
         label="Description"
         id="description"
         name="description"
-        as="textarea"
         value={formData.description}
         onChange={handleInputChange}
-        className="min-h-[120px]"
         disabled={loading}
       />
 
