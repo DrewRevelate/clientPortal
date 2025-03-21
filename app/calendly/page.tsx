@@ -9,8 +9,8 @@ export default function CalendlyRedirect() {
   const searchParams = useSearchParams();
   
   useEffect(() => {
-    // Default Calendly link
-    let calendlyUrl = 'https://calendly.com/drew-revelateops';
+    // Default Calendly link with the correct username
+    let calendlyUrl = 'https://calendly.com/drewlambert';
     
     // Check if event type is specified in query params
     const eventType = searchParams.get('event');

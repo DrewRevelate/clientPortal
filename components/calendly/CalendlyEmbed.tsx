@@ -73,8 +73,8 @@ export default function CalendlyEmbed({
     }
   });
 
-  // Build the URL with pre-filled data - encode the @ symbol in the URL
-  const calendlyUsername = 'drew-revelateops'; // Changed from drew@revelateops.com to avoid URL parsing issues
+  // Build the URL with pre-filled data - use the correct Calendly URL
+  const calendlyUsername = 'drewlambert'; // Updated to the correct username
   const rootUrl = `https://calendly.com/${calendlyUsername}`;
   const url = eventType ? `${rootUrl}/${eventType}` : rootUrl;
   

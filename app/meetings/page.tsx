@@ -59,7 +59,7 @@ export default function MeetingsPage() {
         </div>
         
         {calendlyError ? (
-          <CalendlyFallback username="drew-revelateops" />
+          <CalendlyFallback username="drewlambert" />
         ) : (
           <CalendlyEmbed 
             email={currentUser?.email || ''}

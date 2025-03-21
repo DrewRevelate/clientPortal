@@ -10,7 +10,7 @@ interface CalendlyFallbackProps {
 }
 
 export default function CalendlyFallback({ 
-  username = 'drew-revelateops', 
+  username = 'drewlambert', // Updated to the correct username
   className = '' 
 }: CalendlyFallbackProps) {
   const calendlyUrl = `https://calendly.com/${username}`;
