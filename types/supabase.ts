@@ -43,6 +43,15 @@ export interface Database {
           industry: string | null
           created_at: string
           updated_at: string | null
+          phone: string | null
+          email_domain: string | null
+          website: string | null
+          pas: string | null
+          email: string | null
+          engagement_platform: string | null
+          klaviyo_field: string | null
+          other: string | null
+          salesforce: string | null
         }
         Insert: {
           id?: string
@@ -51,6 +60,15 @@ export interface Database {
           industry?: string | null
           created_at?: string
           updated_at?: string | null
+          phone?: string | null
+          email_domain?: string | null
+          website?: string | null
+          pas?: string | null
+          email?: string | null
+          engagement_platform?: string | null
+          klaviyo_field?: string | null
+          other?: string | null
+          salesforce?: string | null
         }
         Update: {
           id?: string
@@ -59,6 +77,15 @@ export interface Database {
           industry?: string | null
           created_at?: string
           updated_at?: string | null
+          phone?: string | null
+          email_domain?: string | null
+          website?: string | null
+          pas?: string | null
+          email?: string | null
+          engagement_platform?: string | null
+          klaviyo_field?: string | null
+          other?: string | null
+          salesforce?: string | null
         }
       },
       contacts: {
@@ -175,8 +202,153 @@ export interface Database {
           calendly_event_uri?: string | null
           calendly_invitee_uri?: string | null
         }
+      },
+      meeting_notes: {
+        Row: {
+          id: string
+          meeting_id: string
+          summary: string | null
+          action_items: string | null
+          decisions: string | null
+          created_by: string
+          created_at: string
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          meeting_id: string
+          summary?: string | null
+          action_items?: string | null
+          decisions?: string | null
+          created_by: string
+          created_at?: string
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          meeting_id?: string
+          summary?: string | null
+          action_items?: string | null
+          decisions?: string | null
+          created_by?: string
+          created_at?: string
+          updated_at?: string | null
+        }
+      },
+      appointments: {
+        Row: {
+          id: string
+          client_id: string | null
+          title: string
+          description: string | null
+          start_time: string
+          end_time: string
+          duration: number | null
+          is_video_meeting: boolean | null
+          meeting_link: string | null
+          status: string | null
+          created_at: string
+          updated_at: string | null
+          calendly_event_uuid: string | null
+          calendly_invitee_uuid: string | null
+          reschedule_url: string | null
+          cancel_url: string | null
+          canceled_at: string | null
+          cancel_reason: string | null
+          calendly_event_uri: string | null
+          calendly_invitee_uri: string | null
+        }
+        Insert: {
+          id?: string
+          client_id?: string | null
+          title: string
+          description?: string | null
+          start_time: string
+          end_time: string
+          duration?: number | null
+          is_video_meeting?: boolean | null
+          meeting_link?: string | null
+          status?: string | null
+          created_at?: string
+          updated_at?: string | null
+          calendly_event_uuid?: string | null
+          calendly_invitee_uuid?: string | null
+          reschedule_url?: string | null
+          cancel_url?: string | null
+          canceled_at?: string | null
+          cancel_reason?: string | null
+          calendly_event_uri?: string | null
+          calendly_invitee_uri?: string | null
+        }
+        Update: {
+          id?: string
+          client_id?: string | null
+          title?: string
+          description?: string | null
+          start_time?: string
+          end_time?: string
+          duration?: number | null
+          is_video_meeting?: boolean | null
+          meeting_link?: string | null
+          status?: string | null
+          created_at?: string
+          updated_at?: string | null
+          calendly_event_uuid?: string | null
+          calendly_invitee_uuid?: string | null
+          reschedule_url?: string | null
+          cancel_url?: string | null
+          canceled_at?: string | null
+          cancel_reason?: string | null
+          calendly_event_uri?: string | null
+          calendly_invitee_uri?: string | null
+        }
+      },
+      conversations: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          created_at: string
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          created_at?: string
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          created_at?: string
+          updated_at?: string | null
+        }
+      },
+      todos: {
+        Row: {
+          id: string
+          title: string
+          completed: boolean | null
+          user_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          completed?: boolean | null
+          user_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          completed?: boolean | null
+          user_id?: string
+          created_at?: string
+        }
       }
-      // Add other tables as needed
     }
     Views: {
       [_ in never]: never
