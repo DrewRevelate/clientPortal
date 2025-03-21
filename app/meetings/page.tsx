@@ -1,8 +1,10 @@
-"use client";
-
 import DashboardLayout from '@/components/layout/Dashboard';
 import Link from 'next/link';
 import { FiPlus, FiFilter, FiSearch, FiCalendar, FiClock, FiVideo, FiUsers, FiFileText } from 'react-icons/fi';
+import { useState } from 'react';
+
+// Define meeting status type
+type MeetingStatus = 'Upcoming' | 'Live' | 'Completed' | 'Cancelled';
 
 export default function Meetings() {
   // Sample data for meetings
@@ -14,7 +16,7 @@ export default function Meetings() {
       date: 'March 22, 2025',
       time: '10:00 AM',
       duration: '60 min',
-      status: 'Upcoming',
+      status: 'Upcoming' as MeetingStatus,
       project: 'CRM Integration',
       attendees: ['Alex Thompson', 'Sarah Miller', 'You'],
       meetingLink: 'https://zoom.us/j/123456789',
@@ -30,7 +32,7 @@ export default function Meetings() {
       date: 'March 25, 2025',
       time: '2:00 PM',
       duration: '90 min',
-      status: 'Upcoming',
+      status: 'Upcoming' as MeetingStatus,
       project: 'Data Visualization Dashboard',
       attendees: ['Alex Thompson', 'Jason Patel', 'You', 'Mark Williams'],
       meetingLink: 'https://zoom.us/j/987654321',
@@ -46,7 +48,7 @@ export default function Meetings() {
       date: 'January 15, 2025',
       time: '1:00 PM',
       duration: '60 min',
-      status: 'Completed',
+      status: 'Completed' as MeetingStatus,
       project: 'CRM Integration',
       attendees: ['Alex Thompson', 'Sarah Miller', 'Jason Patel', 'You'],
       meetingLink: 'https://zoom.us/j/567891234',
@@ -62,7 +64,7 @@ export default function Meetings() {
       date: 'February 10, 2025',
       time: '11:00 AM',
       duration: '45 min',
-      status: 'Completed',
+      status: 'Completed' as MeetingStatus,
       project: 'CRM Integration',
       attendees: ['Jason Patel', 'You'],
       meetingLink: 'https://zoom.us/j/123789456',
@@ -74,11 +76,11 @@ export default function Meetings() {
   ];
 
   // Status styling
-  const statusStyles = {
+  const statusStyles: Record<MeetingStatus, string> = {
     'Upcoming': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
     'Live': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
     'Completed': 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
-    'Cancelled': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+    'Cancelled': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
   };
 
   return (
