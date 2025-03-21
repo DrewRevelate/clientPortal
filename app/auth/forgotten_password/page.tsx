@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import ModernAuthForm from '@/components/auth/ModernAuthForm';
+import ResetPasswordForm from '@/components/auth/ResetPasswordForm';
 
-export default function SignIn() {
+export default function ForgottenPassword() {
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       {/* Left side with brand and illustration */}
@@ -27,30 +27,14 @@ export default function SignIn() {
             className="mx-auto"
           />
           
-          <h2 className="text-3xl font-medium">Transform Your Data Journey</h2>
+          <h2 className="text-3xl font-medium">Reset Your Password</h2>
           <p className="text-white/80 max-w-sm mx-auto">
-            Access your personalized client portal to manage projects, track tasks, and leverage data-driven insights for your business growth.
+            We'll send you instructions to reset your password and get you back to accessing your client portal.
           </p>
-          
-          {/* Client testimonial */}
-          <div className="mt-10 p-6 bg-white/10 rounded-lg backdrop-blur-sm">
-            <p className="italic text-white/90 mb-4">
-              "RevelateOps has transformed how we make decisions. Their data insights directly contributed to our 32% revenue growth this year."
-            </p>
-            <div className="flex items-center justify-center">
-              <div className="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center mr-3">
-                <span className="font-bold">JD</span>
-              </div>
-              <div className="text-left">
-                <p className="font-medium">Jane Doe</p>
-                <p className="text-sm text-white/70">CEO, Example Company</p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
-      {/* Right side with login form */}
+      {/* Right side with reset form */}
       <div className="flex flex-col items-center justify-center p-8">
         <div className="w-full max-w-md space-y-8">
           {/* Mobile logo for small screens */}
@@ -70,25 +54,25 @@ export default function SignIn() {
           
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              Welcome Back
+              Forgot Your Password?
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Sign in to access your client portal
+              Enter your email and we'll send you password reset instructions
             </p>
           </div>
 
-          <div className="mt-8">
-            <ModernAuthForm view="sign_in" />
+          <div className="mt-8 bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+            <ResetPasswordForm />
           </div>
 
           <div className="text-center text-sm">
             <p className="text-gray-600 dark:text-gray-400">
-              Don't have an account?{' '}
+              Remember your password?{' '}
               <Link 
-                href="/auth/signup" 
+                href="/auth/signin" 
                 className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300"
               >
-                Contact us
+                Sign in
               </Link>
             </p>
           </div>
