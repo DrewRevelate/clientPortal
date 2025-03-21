@@ -18,11 +18,8 @@ const lexend = Lexend({
   variable: '--font-lexend',
 });
 
-// Metadata moved to a separate file due to "use client" directive
-export const metadata = {
-  title: 'RevelateOps Client Portal',
-  description: 'Secure client portal for RevelateOps clients to track projects, tasks, meetings, and documents.',
-};
+// Note: Metadata cannot be exported from a client component
+// See the separate metadata.ts file for metadata configuration
 
 export default function RootLayout({
   children,
