@@ -1,10 +1,13 @@
 #!/bin/bash
-cd /Users/drewlambert/Desktop/Projects/client-portal
 
-# Add changes to git
+# First fix the JWT secret issue in any migration files
+sed -i'' -e 's/ALTER DATABASE postgres SET "app.jwt_secret" TO/-- ALTER DATABASE postgres SET "app.jwt_secret" TO/' /Users/drewlambert/Desktop/Projects/client-portal/supabase/migrations/00000000000000_initial_schema.sql
+
+# Add and commit the changes
 git add .
-git commit -m "Fix JWT secret issue in migration file"
+git commit -m "Fix database migration issues"
 git push
 
-# Run the migration with debug flag
-supabase db push --debug
+# Run the migrations using connection pooler (transaction mode)
+echo "Using connection pooler: postgresql://postgres.ynkuozdffpsogpziaize:[YOUR-PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres"
+supabase db push --db-url "postgresql://postgres.ynkuozdffpsogpziaize:[YOUR-PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres" --debug
