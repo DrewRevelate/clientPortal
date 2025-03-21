@@ -1,5 +1,3 @@
-"use client";
-
 import DashboardLayout from '@/components/layout/Dashboard';
 import Link from 'next/link';
 import { 
@@ -12,10 +10,7 @@ import {
   FiMessageSquare,
   FiPlus
 } from 'react-icons/fi';
-
-// Define status types to match the keys in statusColors
-type ProjectStatus = 'Planning' | 'In Progress' | 'On Hold' | 'Completed' | 'Cancelled' | 'Not Started';
-type TaskPriority = 'High' | 'Medium' | 'Low';
+import { ProjectStatus, TaskStatus, TaskPriority } from '@/lib/types';
 
 interface ProjectDetailsProps {
   params: {
@@ -38,10 +33,10 @@ export default function ProjectDetails({ params }: ProjectDetailsProps) {
     createdAt: 'January 10, 2025',
     updatedAt: 'March 16, 2025',
     tasks: [
-      { id: 1, name: 'Review analytics setup', status: 'In Progress' as ProjectStatus, dueDate: 'March 21, 2025', priority: 'High' as TaskPriority },
-      { id: 2, name: 'Provide access to sales database', status: 'Completed' as ProjectStatus, dueDate: 'March 15, 2025', priority: 'Medium' as TaskPriority },
-      { id: 3, name: 'Configure API endpoints', status: 'Pending', dueDate: 'March 25, 2025', priority: 'Medium' as TaskPriority },
-      { id: 4, name: 'Approve integration plan', status: 'Completed' as ProjectStatus, dueDate: 'February 5, 2025', priority: 'High' as TaskPriority },
+      { id: 1, name: 'Review analytics setup', status: 'In Progress' as TaskStatus, dueDate: 'March 21, 2025', priority: 'High' },
+      { id: 2, name: 'Provide access to sales database', status: 'Completed' as TaskStatus, dueDate: 'March 15, 2025', priority: 'Medium' },
+      { id: 3, name: 'Configure API endpoints', status: 'Pending' as TaskStatus, dueDate: 'March 25, 2025', priority: 'Medium' },
+      { id: 4, name: 'Approve integration plan', status: 'Completed' as TaskStatus, dueDate: 'February 5, 2025', priority: 'High' },
     ],
     documents: [
       { id: 1, name: 'Project Proposal', type: 'PDF', uploadedAt: 'January 10, 2025', size: '3.5 MB' },
@@ -78,7 +73,7 @@ export default function ProjectDetails({ params }: ProjectDetailsProps) {
   };
 
   // Status colors
-  const statusColors: Record<ProjectStatus, string> = {
+  const statusColors: Record<string, string> = {
     'Planning': 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
     'In Progress': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
     'On Hold': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
@@ -88,7 +83,7 @@ export default function ProjectDetails({ params }: ProjectDetailsProps) {
   };
 
   // Task priority colors
-  const priorityColors: Record<TaskPriority, string> = {
+  const priorityColors: Record<string, string> = {
     'High': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
     'Medium': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
     'Low': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
@@ -219,7 +214,13 @@ export default function ProjectDetails({ params }: ProjectDetailsProps) {
                         <span className={`mr-2 px-2.5 py-0.5 text-xs font-medium rounded-full ${priorityColors[task.priority]}`}>
                           {task.priority}
                         </span>
-                        <span className={`px-2.5 py-0.5 text-xs font-medium rounded-full ${statusColors[task.status]}`}>
+                        <span className={`px-2.5 py-0.5 text-xs font-medium rounded-full ${
+                          task.status === 'Completed' 
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' 
+                            : task.status === 'In Progress'
+                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                            : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+                        }`}>
                           {task.status}
                         </span>
                       </div>
