@@ -25,6 +25,7 @@ export default function CalendlyEmbed({
 }: CalendlyEmbedProps) {
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Get current user ID to associate meetings with the correct user
   useEffect(() => {
@@ -72,8 +73,9 @@ export default function CalendlyEmbed({
     }
   });
 
-  // Build the URL with pre-filled data
-  const rootUrl = 'https://calendly.com/drew@revelateops.com';
+  // Build the URL with pre-filled data - encode the @ symbol in the URL
+  const calendlyUsername = 'drew-revelateops'; // Changed from drew@revelateops.com to avoid URL parsing issues
+  const rootUrl = `https://calendly.com/${calendlyUsername}`;
   const url = eventType ? `${rootUrl}/${eventType}` : rootUrl;
   
   const prefill = {
@@ -86,6 +88,19 @@ export default function CalendlyEmbed({
     }
   };
 
+  if (error) {
+    return (
+      <div className="bg-red-50 p-4 rounded-md">
+        <p className="text-red-600">
+          {error}
+        </p>
+        <p className="mt-2">
+          Please contact support or try again later.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className={`calendly-embed ${className}`}>
       {loading ? (
@@ -93,21 +108,24 @@ export default function CalendlyEmbed({
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
         </div>
       ) : (
-        <InlineWidget
-          url={url}
-          prefill={prefill}
-          styles={{
-            height: typeof height === 'number' ? `${height}px` : height,
-            minWidth: '320px',
-          }}
-          pageSettings={{
-            backgroundColor: 'ffffff',
-            hideEventTypeDetails: false,
-            hideLandingPageDetails: false,
-            primaryColor: '3B166A', // Match your brand color
-            textColor: '19092f',
-          }}
-        />
+        <div key={`calendly-${Date.now()}`} className="w-full">
+          <InlineWidget
+            url={url}
+            prefill={prefill}
+            styles={{
+              height: typeof height === 'number' ? `${height}px` : height,
+              minWidth: '320px',
+              width: '100%',
+            }}
+            pageSettings={{
+              backgroundColor: 'ffffff',
+              hideEventTypeDetails: false,
+              hideLandingPageDetails: false,
+              primaryColor: '3B166A', // Match your brand color
+              textColor: '19092f',
+            }}
+          />
+        </div>
       )}
     </div>
   );

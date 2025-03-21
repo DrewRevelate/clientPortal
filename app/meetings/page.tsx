@@ -4,9 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import { supabase } from '@/lib/supabase/client';
 import CalendlyEmbed from '@/components/calendly/CalendlyEmbed';
+import CalendlyFallback from '@/components/calendly/CalendlyFallback';
 
 export default function MeetingsPage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [calendlyError, setCalendlyError] = useState(false);
   
   useEffect(() => {
     async function loadUserProfile() {
@@ -31,6 +33,17 @@ export default function MeetingsPage() {
     }
     
     loadUserProfile();
+    
+    // Add a timeout to check if Calendly loaded correctly
+    const timer = setTimeout(() => {
+      // Check if any Calendly elements exist and are visible
+      const calendlyElements = document.querySelectorAll('.calendly-inline-widget iframe');
+      if (calendlyElements.length === 0) {
+        setCalendlyError(true);
+      }
+    }, 5000);
+    
+    return () => clearTimeout(timer);
   }, []);
   
   return (
@@ -45,12 +58,16 @@ export default function MeetingsPage() {
           </p>
         </div>
         
-        <CalendlyEmbed 
-          email={currentUser?.email || ''}
-          firstName={currentUser?.first_name || ''}
-          lastName={currentUser?.last_name || ''}
-          height={700}
-        />
+        {calendlyError ? (
+          <CalendlyFallback username="drew-revelateops" />
+        ) : (
+          <CalendlyEmbed 
+            email={currentUser?.email || ''}
+            firstName={currentUser?.first_name || ''}
+            lastName={currentUser?.last_name || ''}
+            height={700}
+          />
+        )}
       </Card>
       
       <div className="mt-8">
