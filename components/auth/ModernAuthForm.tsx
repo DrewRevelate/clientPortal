@@ -8,6 +8,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { BsEnvelope, BsLock, BsShieldLock } from 'react-icons/bs';
 import { supabase } from '@/lib/supabase/client';
 import Link from 'next/link';
+import { Database } from '@/types/supabase';
 
 interface AuthFormProps {
   view?: 'sign_in' | 'sign_up' | 'forgotten_password';
