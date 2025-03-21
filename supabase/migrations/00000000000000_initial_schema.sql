@@ -1,5 +1,6 @@
 -- Enable Row Level Security
-ALTER DATABASE postgres SET "app.jwt_secret" TO 'your-jwt-secret';
+-- Commented out JWT secret line that was causing issues
+-- ALTER DATABASE postgres SET "app.jwt_secret" TO 'your-jwt-secret';
 
 -- Create schema for application
 CREATE SCHEMA IF NOT EXISTS app;
