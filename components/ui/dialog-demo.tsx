@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/Button";
+import Button from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/Input";
+import Input from "@/components/ui/Input";
 import { Label } from "@/components/ui/label";
 import { useId } from "react";
 
