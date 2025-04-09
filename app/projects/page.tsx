@@ -1,43 +1,94 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/layout/Dashboard';
 import Link from 'next/link';
-import { FiPlus, FiFilter, FiSearch } from 'react-icons/fi';
+import { FiPlus, FiFilter, FiSearch, FiLoader, FiFolder } from 'react-icons/fi';
+import PageHeader from '@/components/layout/PageHeader';
+import { supabase } from '@/lib/supabase/client';
+import { format } from 'date-fns';
+import { useSupabaseRealtime } from '@/lib/hooks/useSupabaseRealtime';
 
 // Define status type to match the keys in statusColors
 type ProjectStatus = 'Planning' | 'In Progress' | 'On Hold' | 'Completed' | 'Cancelled';
 
+import { Database } from '@/types/supabase';
+
+// Define project type from Supabase schema
+type Project = Database['public']['Tables']['projects']['Row'];
+
 export default function Projects() {
-  // Sample data for projects
-  const projects = [
-    { 
-      id: 1,
-      name: 'CRM Integration', 
-      description: 'Integration of Salesforce with existing systems',
-      status: 'In Progress' as ProjectStatus,
-      startDate: 'Jan 15, 2025',
-      endDate: 'Apr 30, 2025',
-      completionPercentage: 45
-    },
-    { 
-      id: 2,
-      name: 'Data Visualization Dashboard', 
-      description: 'Creating interactive dashboards for business analytics',
-      status: 'Planning' as ProjectStatus,
-      startDate: 'Feb 10, 2025',
-      endDate: 'May 15, 2025',
-      completionPercentage: 15
-    },
-    { 
-      id: 3,
-      name: 'Email Marketing Automation', 
-      description: 'Setting up automated email sequences and analytics',
-      status: 'Completed' as ProjectStatus,
-      startDate: 'Oct 5, 2024',
-      endDate: 'Jan 20, 2025',
-      completionPercentage: 100
-    },
-  ];
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Set up real-time subscription for projects
+  const { error: realtimeError } = useSupabaseRealtime({
+    table: 'projects',
+    onChange: (payload) => {
+      if (payload.eventType === 'INSERT') {
+        setProjects(prev => [payload.new as Project, ...prev]);
+      } else if (payload.eventType === 'UPDATE') {
+        setProjects(prev => 
+          prev.map(project => 
+            project.id === payload.new.id ? { ...project, ...payload.new } : project
+          )
+        );
+      } else if (payload.eventType === 'DELETE') {
+        setProjects(prev => 
+          prev.filter(project => project.id !== payload.old.id)
+        );
+      }
+    }
+  });
+  
+  // If there's an error with the real-time subscription, log it
+  useEffect(() => {
+    if (realtimeError) {
+      console.error('Error with real-time subscription:', realtimeError);
+    }
+  }, [realtimeError]);
+
+  // Fetch projects from Supabase
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        setIsLoading(true);
+        const { data, error } = await supabase
+          .from('projects')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          throw error;
+        }
+
+        setProjects(data || []);
+      } catch (err: any) {
+        console.error('Error fetching projects:', err);
+        setError(err.message || 'Failed to fetch projects');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchProjects();
+  }, []);
+
+  // Filter projects based on search term
+  const filteredProjects = searchTerm
+    ? projects.filter(project => 
+        project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (project.description && project.description.toLowerCase().includes(searchTerm.toLowerCase()))
+      )
+    : projects;
+
+  // Format date for display
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return 'Not set';
+    return format(new Date(dateString), 'MMM d, yyyy');
+  };
 
   // Status badge colors
   const statusColors: Record<ProjectStatus, string> = {
@@ -51,44 +102,60 @@ export default function Projects() {
   return (
     <DashboardLayout>
       {/* Page header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Projects</h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400">
-            View and manage your ongoing projects
-          </p>
-        </div>
-        <div className="mt-4 md:mt-0 flex flex-col sm:flex-row gap-3">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <FiSearch className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+      <PageHeader
+        title="Projects"
+        subtitle="View and manage your ongoing projects"
+        icon={<FiFolder className="h-6 w-6 text-primary-500" />}
+        background="light"
+        actions={
+          <>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <FiSearch className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              </div>
+              <input
+                type="text"
+                className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2"
+                placeholder="Search projects..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                aria-label="Search projects"
+              />
             </div>
-            <input
-              type="text"
-              className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2"
-              placeholder="Search projects..."
-            />
-          </div>
-          <button
-            className="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
-          >
-            <FiFilter className="w-4 h-4 mr-2" />
-            Filter
-          </button>
-          <button
-            className="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-          >
-            <FiPlus className="w-4 h-4 mr-2" />
-            New Project
-          </button>
-        </div>
-      </div>
+            <button
+              className="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+              aria-label="Filter projects"
+            >
+              <FiFilter className="w-4 h-4 mr-2" />
+              Filter
+            </button>
+            <Link 
+              href="/projects/new"
+              className="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              aria-label="Create new project"
+            >
+              <FiPlus className="w-4 h-4 mr-2" />
+              New Project
+            </Link>
+          </>
+        }
+      />
 
       {/* Projects list */}
       <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-        {projects.length > 0 ? (
+        {isLoading ? (
+          <div className="p-8 text-center">
+            <FiLoader className="animate-spin h-8 w-8 mx-auto text-primary-600" />
+            <p className="mt-2 text-gray-600 dark:text-gray-400">Loading projects...</p>
+          </div>
+        ) : error ? (
+          <div className="p-8 text-center">
+            <h3 className="text-lg font-medium text-red-600 dark:text-red-400">Error</h3>
+            <p className="mt-1 text-gray-600 dark:text-gray-400">{error}</p>
+          </div>
+        ) : filteredProjects.length > 0 ? (
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
-            {projects.map((project) => (
+            {filteredProjects.map((project) => (
               <div key={project.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between">
                   <div className="flex-1">
@@ -96,31 +163,31 @@ export default function Projects() {
                       <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                         {project.name}
                       </h2>
-                      <span className={`ml-3 px-2.5 py-0.5 text-xs font-medium rounded-full ${statusColors[project.status]}`}>
+                      <span className={`ml-3 px-2.5 py-0.5 text-xs font-medium rounded-full ${statusColors[project.status as ProjectStatus] || statusColors['Planning']}`}>
                         {project.status}
                       </span>
                     </div>
                     <p className="mt-1 text-gray-600 dark:text-gray-400">
-                      {project.description}
+                      {project.description || 'No description provided'}
                     </p>
                     <div className="mt-3 flex items-center space-x-6 text-sm text-gray-500 dark:text-gray-400">
                       <div>
-                        <span className="font-medium">Start:</span> {project.startDate}
+                        <span className="font-medium">Start:</span> {formatDate(project.start_date)}
                       </div>
                       <div>
-                        <span className="font-medium">Target End:</span> {project.endDate}
+                        <span className="font-medium">Target End:</span> {formatDate(project.target_end_date)}
                       </div>
                     </div>
                   </div>
 
                   <div className="mt-4 md:mt-0 md:ml-6 flex flex-col items-end">
                     <div className="text-right text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {project.completionPercentage}% Complete
+                      {project.completion_percentage}% Complete
                     </div>
                     <div className="mt-2 w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
                       <div 
                         className="bg-primary-600 h-2.5 rounded-full"
-                        style={{ width: `${project.completionPercentage}%` }}
+                        style={{ width: `${project.completion_percentage}%` }}
                       ></div>
                     </div>
                     <Link 
@@ -141,12 +208,13 @@ export default function Projects() {
               Get started by creating a new project.
             </p>
             <div className="mt-6">
-              <button
+              <Link 
+                href="/projects/new"
                 className="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               >
                 <FiPlus className="w-4 h-4 mr-2" />
                 New Project
-              </button>
+              </Link>
             </div>
           </div>
         )}
