@@ -12,7 +12,10 @@ import {
   FiBarChart2, 
   FiAlertCircle, 
   FiFileText, 
-  FiClock
+  FiClock,
+  FiFolder,
+  FiCheckSquare,
+  FiCalendar
 } from 'react-icons/fi';
 
 // Dynamically import widget components with code splitting
